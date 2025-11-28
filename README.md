@@ -43,11 +43,6 @@ python manage.py startapp eventos
 
 ```
 eventos/
-├── management/
-│   ├── __init__.py
-│   └── commands/
-│       ├── __init__.py
-│       └── setup_roles.py
 ├── templates/
 │   ├── base.html
 │   ├── login.html
