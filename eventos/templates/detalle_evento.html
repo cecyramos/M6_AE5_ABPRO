@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ evento.titulo }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>{{ evento.titulo }}</h2>
+        <p class="text-muted">Organizador: <strong>{{ evento.organizador.username }}</strong></p>
+        
+        <h4>Descripción</h4>
+        <p>{{ evento.descripcion }}</p>
+        
+        <h4>Detalles</h4>
+        <ul>
+            <li><strong>Fecha:</strong> {{ evento.fecha|date:"d/m/Y H:i" }}</li>
+            <li><strong>Ubicación:</strong> {{ evento.ubicacion }}</li>
+            <li><strong>Tipo:</strong> {{ evento.get_tipo_display }}</li>
+            <li><strong>Privacidad:</strong> {% if evento.privado %}Privado{% else %}Público{% endif %}</li>
+            <li><strong>Asistentes:</strong> {{ evento.asistentes.count }}</li>
+        </ul>
+
+        {% if user.is_authenticated %}
+            {% if user == evento.organizador or user.is_superuser %}
+                <a href="{% url 'editar_evento' evento.pk %}" class="btn btn-warning">Editar</a>
+                {% if user.is_superuser %}
+                    <a href="{% url 'eliminar_evento' evento.pk %}" class="btn btn-danger">Eliminar</a>
+                {% endif %}
+            {% endif %}
+
+            <form method="post" action="{% url 'registrarse_evento' evento.pk %}" style="display:inline;">
+                {% csrf_token %}
+                {% if user in evento.asistentes.all %}
+                    <button type="submit" class="btn btn-secondary">Desregistrarse</button>
+                {% else %}
+                    <button type="submit" class="btn btn-success">Registrarse</button>
+                {% endif %}
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-success">Iniciar sesión para registrarse</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
